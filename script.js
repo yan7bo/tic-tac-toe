@@ -187,17 +187,22 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
     }
 }
 
-const game = GameController();
-game.printNewRound();
-while(true) {
-    game.playRound();
-    let gameEnd = game.checkGameEnd();
-    if(gameEnd) {
-        if (gameEnd == 3) {
-            console.log("Game tie! Play again!");
-        } else {
-            console.log(`Player ${gameEnd} Won! Game Over!`);
+const ScreenController = (function() {
+    const startBtn = document.querySelector(".start-game");
+    startBtn.addEventListener("click", () => {
+        const game = GameController();
+        game.printNewRound();
+        while(true) {
+            game.playRound();
+            let gameEnd = game.checkGameEnd();
+            if(gameEnd) {
+                if (gameEnd == 3) {
+                    console.log("Game tie! Play again!");
+                } else {
+                    console.log(`Player ${gameEnd} Won! Game Over!`);
+                }
+                break;
+            }
         }
-        break;
-    }
-}
+    })
+})();
