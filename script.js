@@ -1,5 +1,5 @@
 function GameBoard() {
-    const board = [];
+    let board = [];
     for (let i = 0; i < 3; i++) {
         board[i] = [];
         for (let j = 0; j < 3; j++) {
@@ -48,7 +48,7 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
     // intialize players, play round, end game
 
     // initialize board
-    board = GameBoard();
+    let board = GameBoard();
 
     // initialize players
     const players = [
@@ -76,9 +76,14 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
         console.log(`${getActivePlayer().name}'s turn.`);
     }
 
-    const playRound = () => {
+    const getBoard = () => {
+        return board.getBoard();
+    }
+
+    const playRound = (column, row) => {
         console.log(`${activePlayer.name} placing token...`);
-        placeToken(promptCol(), promptRow());
+        console.log(column, row);
+        placeToken(column, row);
         printNewRound();
     }
 
@@ -179,7 +184,9 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
     }
 
     return {
+        board,
         getActivePlayer,
+        getBoard,
         printNewRound,
         playRound,
         checkGameEnd,
@@ -188,11 +195,40 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
 }
 
 const ScreenController = (function() {
+
+    const updateScreen = (player, board) => {
+        //const listCells = document.querySelectorAll(".cell") 
+        console.log(player);
+        board.printBoard();
+
+        // udpate player-display
+        const playerDisplay = document.querySelector(".player-display");
+        playerDisplay.textContent = player.name;
+    }
+
     const startBtn = document.querySelector(".start-game");
     startBtn.addEventListener("click", () => {
         const game = GameController();
+        console.log("Game start");
         game.printNewRound();
+        
+        // adds event handler to board
+        const listCells = document.querySelectorAll(".cell");
+        listCells.forEach((element) => {
+            element.addEventListener("click", () => {
+                console.log(`row: ${element.dataset.row}, col: ${element.dataset.col}, val: ${element.textContent}`);
+                game.playRound(+element.dataset.col, +element.dataset.row);
+                updateScreen(game.getActivePlayer(), game.board);
+            })
+        })
+    })
+
+
+    /*
+
         while(true) {
+            
+            
             game.playRound();
             let gameEnd = game.checkGameEnd();
             if(gameEnd) {
@@ -204,5 +240,5 @@ const ScreenController = (function() {
                 break;
             }
         }
-    })
+    */
 })();
