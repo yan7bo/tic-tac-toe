@@ -145,6 +145,19 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
                 return result;
             }
         }
+
+        // check diagonals
+        let diagLeft = checkDiagLeft();
+        if (diagLeft) {
+            return diagLeft;
+        }
+
+        let diagRight = checkDiagRight();
+        if (diagRight) {
+            return diagRight;
+        }
+
+        // if no win
         return 0;
     }
 
@@ -167,6 +180,31 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
             array.push(board.getBoard()[i][col]);
         }
         return checkRow(array);
+    }
+
+    const checkDiagRight = () => {
+        // top left to bottom right
+        let current;
+        let prev = board.getBoard()[0][0].getValue();
+        for (let i = 0; i < 3; i++) {
+            current = board.getBoard()[i][i].getValue();
+            if (current != prev) {
+                return 0;
+            }
+        }
+        return prev;
+    }
+    
+    const checkDiagLeft = () => {
+        // top right to bottom left
+        prev = board.getBoard()[0][2].getValue();
+        for (let i = 0; i < 3; i++) {
+            current = board.getBoard()[0 + i][2 - i].getValue();
+            if (current != prev) {
+                return 0;
+            }
+        }
+        return prev;
     }
 
     // checks if the board has any empty spaces. If there are empty spaces, return 0
@@ -319,7 +357,6 @@ const ScreenController = (function() {
 
 /*
 to do:
-- reset player scores
 - styling
 - diagonal win conditions
 */
