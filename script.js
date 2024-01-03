@@ -303,8 +303,6 @@ const ScreenController = (function() {
 /*
 to do:
 - Screen should show each player's name and if they're X or O
-- Player-Display should use each player's name
-- allow player to input and change names
 - keep track of number of wins for each player
 - reset player scores
 - styling
