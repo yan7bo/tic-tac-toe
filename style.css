@@ -23,3 +23,16 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.player-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.player-container div {
+    width: 10em;
+}

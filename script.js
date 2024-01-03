@@ -81,6 +81,14 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
 
     const getActivePlayer = () => activePlayer;
 
+    const getPlayerName = (index) => {
+        return players[index].name;
+    }
+    
+    const changePlayerName = (index, name) => {
+        players[index].name = name;
+    }
+
     const printNewRound = () => {
         board.printBoard();
         console.log(`${getActivePlayer().name}'s turn.`);
@@ -200,8 +208,11 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
 
     return {
         board,
+        players,
         getActivePlayer,
         getBoard,
+        getPlayerName,
+        changePlayerName,
         printNewRound,
         playRound,
         checkGameEnd,
@@ -211,6 +222,8 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
 }
 
 const ScreenController = (function() {
+
+    let game = GameController();
 
     const listCells = document.querySelectorAll(".cell");
 
@@ -223,10 +236,8 @@ const ScreenController = (function() {
         const playerDisplay = document.querySelector(".player-display");
         if (gameEnd == 3) {
             playerDisplay.textContent = "It's a tie! Game over! Play again?";
-        } else if (gameEnd == 2) {
-            playerDisplay.textContent = "Player Two won! Game over! Play again?";
-        } else if (gameEnd == 1) {
-            playerDisplay.textContent = "Player One won! Game over! Play again?";
+        } else if (gameEnd == 2 || gameEnd == 1) {
+            playerDisplay.textContent = `${game.getPlayerName(gameEnd - 1)} won! Game over! Play again?`;
         }
     }
 
@@ -242,29 +253,48 @@ const ScreenController = (function() {
 
     const startBtn = document.querySelector(".start-game");
     startBtn.addEventListener("click", () => {
-        let game = GameController();
+        game = GameController();
         console.log("Game start");
         game.printNewRound();
         updatePlayerDisplay(game.getActivePlayer(), game.checkGameEnd());
         updateBoard(game.board);
-        
-        // adds event handler to board
-        listCells.forEach((element) => {
-            element.addEventListener("click", () => {
-                // checks if game has ended, if game has ended, do not play round
-                if (!game.checkGameEnd()) {
-                    game.playRound(+element.dataset.row, +element.dataset.col);
-                    updateBoard(game.board);
-                }
+    })
 
-                // after playRound, if game has now ended, display end game message
-                // otherwise, display which player's turn it is
-                if (game.checkGameEnd()) {
-                    updateEndGame(game.checkGameEnd());
-                } else {
-                    updatePlayerDisplay(game.getActivePlayer());
-                }
-            });
+    // adds event handler to board
+    listCells.forEach((element) => {
+        element.addEventListener("click", () => {
+            // checks if game has ended, if game has ended, do not play round
+            if (!game.checkGameEnd()) {
+                game.playRound(+element.dataset.row, +element.dataset.col);
+                updateBoard(game.board);
+            }
+
+            // after playRound, if game has now ended, display end game message
+            // otherwise, display which player's turn it is
+            if (game.checkGameEnd()) {
+                updateEndGame(game.checkGameEnd());
+            } else {
+                updatePlayerDisplay(game.getActivePlayer());
+            }
+        });
+    })
+
+    const updatePlayerInfo = () => {
+        const playerNameElements = document.querySelectorAll(".player-name");
+        playerNameElements.forEach((element, index) => {
+            element.textContent = game.getPlayerName(index);
+        })
+    }
+
+    // Change Name buttons
+    const listChangeNameBtns = document.querySelectorAll(".change-name");
+    listChangeNameBtns.forEach((element, index) => {
+        element.addEventListener("click", () => {
+            const newName = prompt(`Enter Player One's name:`);
+            // console.log(newName);
+            game.changePlayerName(index, newName);
+            updatePlayerInfo();
+            updatePlayerDisplay(game.getActivePlayer());
         })
     })
 })();
