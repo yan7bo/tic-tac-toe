@@ -223,6 +223,9 @@ function GameController(p1 = "Player One", p2 = "Player Two") {
 
 const ScreenController = (function() {
 
+    // initialize scores
+    let scores = [0, 0];
+
     let game = GameController();
 
     const listCells = document.querySelectorAll(".cell");
@@ -234,10 +237,12 @@ const ScreenController = (function() {
 
     const updateEndGame = (gameEnd) => {
         const playerDisplay = document.querySelector(".player-display");
+        const playerScores = document.querySelectorAll(".score");
         if (gameEnd == 3) {
             playerDisplay.textContent = "It's a tie! Game over! Play again?";
         } else if (gameEnd == 2 || gameEnd == 1) {
             playerDisplay.textContent = `${game.getPlayerName(gameEnd - 1)} won! Game over! Play again?`;
+            playerScores[gameEnd - 1].textContent = +playerScores[gameEnd - 1].textContent + 1;
         }
     }
 
@@ -302,8 +307,6 @@ const ScreenController = (function() {
 
 /*
 to do:
-- Screen should show each player's name and if they're X or O
-- keep track of number of wins for each player
 - reset player scores
 - styling
 */
