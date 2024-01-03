@@ -41,7 +41,17 @@ function Cell() {
 
     const getValue = () => value;
 
-    return { addToken, getValue };
+    const getToken = () => {
+        if (value == 1) {
+            return "X";
+        } else if (value == 2) {
+            return "O";
+        } else {
+            return "";
+        }
+    }
+
+    return { addToken, getValue, getToken };
 }
 
 function GameController(p1 = "Player One", p2 = "Player Two") {
@@ -225,7 +235,7 @@ const ScreenController = (function() {
         // i = row, j = col
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                listCells[i + (3 * j)].textContent = board.getCell(j, i).getValue();
+                listCells[i + (3 * j)].textContent = board.getCell(j, i).getToken();
             }
         }
     }
@@ -262,7 +272,6 @@ const ScreenController = (function() {
 
 /*
 to do:
-- board should display Xs and Os rather than 1s and 2s
 - Screen should show each player's name and if they're X or O
 - Player-Display should use each player's name
 - allow player to input and change names
