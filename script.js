@@ -204,97 +204,57 @@ const ScreenController = (function() {
 
     const listCells = document.querySelectorAll(".cell");
 
-    const updateScreen = (player, board, gameEnd) => {
-        console.log(player);
-        board.printBoard();
-
-        // update player-display
+    const updatePlayerDisplay = (player) => {
         const playerDisplay = document.querySelector(".player-display");
-        let playerDisplayStr = "";
-        if (gameEnd == 3) {
-            playerDisplayStr = "It's a tie! Game over! Play again?";
-        } else if (gameEnd == 2) {
-            playerDisplayStr = "Player Two won! Game over! Play again?";
-        } else if (gameEnd == 1) {
-            playerDisplayStr = "Player One won! Game over! Play again?";
-        } else {
-            playerDisplayStr = player.name;
-        }
-        playerDisplay.textContent = playerDisplayStr;
+        playerDisplay.textContent = player.name + "'s turn";
+    }
 
-        // update board
+    const updateEndGame = (gameEnd) => {
+        const playerDisplay = document.querySelector(".player-display");
+        if (gameEnd == 3) {
+            playerDisplay.textContent = "It's a tie! Game over! Play again?";
+        } else if (gameEnd == 2) {
+            playerDisplay.textContent = "Player Two won! Game over! Play again?";
+        } else if (gameEnd == 1) {
+            playerDisplay.textContent = "Player One won! Game over! Play again?";
+        }
+    }
+
+    const updateBoard = (board) => {
+        board.printBoard();
         // i = row, j = col
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 listCells[i + (3 * j)].textContent = board.getCell(j, i).getValue();
             }
         }
-
     }
-
-
 
     const startBtn = document.querySelector(".start-game");
     startBtn.addEventListener("click", () => {
         let game = GameController();
         console.log("Game start");
         game.printNewRound();
-        updateScreen(game.getActivePlayer(), game.board);
+        updatePlayerDisplay(game.getActivePlayer(), game.checkGameEnd());
+        updateBoard(game.board);
         
         // adds event handler to board
-        //const listCells = document.querySelectorAll(".cell");
         listCells.forEach((element) => {
-            const clickBoard = () => {
-                // console.log(`row: ${element.dataset.row}, col: ${element.dataset.col}, val: ${element.textContent}`);
-                game.playRound(+element.dataset.row, +element.dataset.col);
-
-        
-                // checks if game has ended
-                const gameEnd = game.checkGameEnd();
-                console.log(gameEnd);
-                updateScreen(game.getActivePlayer(), game.board, gameEnd);
-
-                
-                if(gameEnd == 3) {
-                    console.log("Game Tie! Play again?");
-                    game.endGame();
-                } else if(gameEnd == 2) {
-                    console.log("Player Two won! Game over! Play again?");
-                    game.endGame();
-                } else if (gameEnd == 1) {
-                    console.log("Player One won! Game over! Play again?");
-                    game.endGame();
-                } else {
-                    updateScreen(game.getActivePlayer(), game.board, gameEnd);
+            element.addEventListener("click", () => {
+                // checks if game has ended, if game has ended, do not play round
+                if (!game.checkGameEnd()) {
+                    game.playRound(+element.dataset.row, +element.dataset.col);
+                    updateBoard(game.board);
                 }
-            }
-            element.addEventListener("click", clickBoard);
+
+                // after playRound, if game has now ended, display end game message
+                // otherwise, display which player's turn it is
+                if (game.checkGameEnd()) {
+                    updateEndGame(game.checkGameEnd());
+                } else {
+                    updatePlayerDisplay(game.getActivePlayer());
+                }
+            });
         })
-        /*
-        document.addEventListener("click", () => {
-            listCells.forEach((element) => {
-                element.removeEventListener("click", clickBoard);
-            })
-        })
-        */
     })
-
-
-    /*
-
-        while(true) {
-            
-            
-            game.playRound();
-            let gameEnd = game.checkGameEnd();
-            if(gameEnd) {
-                if (gameEnd == 3) {
-                    console.log("Game tie! Play again!");
-                } else {
-                    console.log(`Player ${gameEnd} Won! Game Over!`);
-                }
-                break;
-            }
-        }
-    */
 })();
