@@ -230,9 +230,9 @@ const ScreenController = (function() {
 
     const listCells = document.querySelectorAll(".cell");
 
-    const updatePlayerDisplay = (player) => {
+    const updatePlayerDisplay = () => {
         const playerDisplay = document.querySelector(".player-display");
-        playerDisplay.textContent = player.name + "'s turn";
+        playerDisplay.textContent = game.getActivePlayer().name + "'s turn";
     }
 
     const updateEndGame = (gameEnd) => {
@@ -246,12 +246,12 @@ const ScreenController = (function() {
         }
     }
 
-    const updateBoard = (board) => {
-        board.printBoard();
+    const updateBoard = () => {
+        game.board.printBoard();
         // i = row, j = col
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
-                listCells[i + (3 * j)].textContent = board.getCell(j, i).getToken();
+                listCells[i + (3 * j)].textContent = game.board.getCell(j, i).getToken();
             }
         }
     }
@@ -261,8 +261,8 @@ const ScreenController = (function() {
         game = GameController();
         console.log("Game start");
         game.printNewRound();
-        updatePlayerDisplay(game.getActivePlayer(), game.checkGameEnd());
-        updateBoard(game.board);
+        updatePlayerDisplay();
+        updateBoard();
     })
 
     // adds event handler to board
@@ -271,7 +271,7 @@ const ScreenController = (function() {
             // checks if game has ended, if game has ended, do not play round
             if (!game.checkGameEnd()) {
                 game.playRound(+element.dataset.row, +element.dataset.col);
-                updateBoard(game.board);
+                updateBoard();
             }
 
             // after playRound, if game has now ended, display end game message
@@ -279,7 +279,7 @@ const ScreenController = (function() {
             if (game.checkGameEnd()) {
                 updateEndGame(game.checkGameEnd());
             } else {
-                updatePlayerDisplay(game.getActivePlayer());
+                updatePlayerDisplay();
             }
         });
     })
@@ -299,8 +299,20 @@ const ScreenController = (function() {
             // console.log(newName);
             game.changePlayerName(index, newName);
             updatePlayerInfo();
-            updatePlayerDisplay(game.getActivePlayer());
+            updatePlayerDisplay();
         })
+    })
+
+    // reset-scores button
+    const resetBtn = document.querySelector(".reset-scores");
+    resetBtn.addEventListener("click", () => {
+        const playerScores = document.querySelectorAll(".score");
+        playerScores.forEach((element) => {
+            element.textContent = "0";
+        })
+        game = GameController();
+        updatePlayerDisplay();
+        updateBoard();
     })
 })();
 
@@ -309,4 +321,5 @@ const ScreenController = (function() {
 to do:
 - reset player scores
 - styling
+- diagonal win conditions
 */
