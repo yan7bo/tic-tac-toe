@@ -268,6 +268,17 @@ const ScreenController = (function() {
 
     const listCells = document.querySelectorAll(".cell");
 
+    // adding border styles of listCells
+    listCells.forEach((element, index) => {
+        if (index % 3 != 2) {
+            element.style.borderRight = "1px solid black";
+        }
+
+        if (index < 6) {
+            element.style.borderBottom = "1px solid black";
+        }
+    })
+
     const updatePlayerDisplay = () => {
         const playerDisplay = document.querySelector(".player-display");
         playerDisplay.textContent = game.getActivePlayer().name + "'s turn";
@@ -279,7 +290,7 @@ const ScreenController = (function() {
         if (gameEnd == 3) {
             playerDisplay.textContent = "It's a tie! Game over! Play again?";
         } else if (gameEnd == 2 || gameEnd == 1) {
-            playerDisplay.textContent = `${game.getPlayerName(gameEnd - 1)} won! Game over! Play again?`;
+            playerDisplay.textContent = `${game.getPlayerName(gameEnd - 1)} won! Game over!`;
             playerScores[gameEnd - 1].textContent = +playerScores[gameEnd - 1].textContent + 1;
         }
     }
@@ -358,5 +369,6 @@ const ScreenController = (function() {
 /*
 to do:
 - styling
-- diagonal win conditions
+- Clean up console output
+- clean up code (unused functions)
 */
